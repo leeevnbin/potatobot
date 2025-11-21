@@ -264,7 +264,7 @@ def handle_emoji_changed_command(event, client: WebClient):
         emoji_name = event.get("name")
         emoji_url = event.get("value")
 
-        text = f"감자농장에 {emoji_name}가 이사왔습니다."
+        text = f"감자농장에 `{emoji_name}`가 이사왔습니다."
 
         client.chat_postMessage(
             channel="C09U99B3V7D",
