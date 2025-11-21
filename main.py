@@ -1,4 +1,6 @@
 import os
+import ssl
+import certifi
 import csv
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -6,15 +8,21 @@ from dotenv import load_dotenv
 from datetime import datetime
 from slack_sdk import WebClient
 
+
+ssl._create_default_https_context = lambda: ssl.create_default_context(
+    cafile=certifi.where()
+)
+
+
 load_dotenv()
 
 app = App(token=os.environ["SLACK_BOT_TOKEN"])
 
 
-# @app.message("ㅎㅇ")
-# def say_hello(message, say):
-#     user = message["user"]
-#     say(f"안녕, <@{user}>! 나는 찜감자야. 수줍..")
+@app.message("감자야")
+def say_hello(message, say):
+    user = message["user"]
+    say(f"안녕, <@{user}>! 나는 찜감자야. 수줍..")
 
 
 @app.command("/끄적")
@@ -246,6 +254,33 @@ def handle_some_action(ack, body, client: WebClient):
         file=file_path,
         initial_comment=f"#{dm_channel_name} 전체 기록입니다.",
     )
+
+
+@app.event("emoji_changed")
+def handle_emoji_changed_command(event, client: WebClient):
+    subtype = event.get("subtype")
+
+    if subtype == "add":
+        emoji_name = event.get("name")
+        emoji_url = event.get("value")
+
+        text = f"감자농장에 {emoji_name}가 이사왔습니다."
+
+        client.chat_postMessage(
+            channel="C09U99B3V7D",
+            text=text,
+            blocks=[
+                {
+                    "type": "section",
+                    "text": {"type": "mrkdwn", "text": text},
+                    "accessory": {
+                        "type": "image",
+                        "image_url": emoji_url,
+                        "alt_text": emoji_name,
+                    },
+                }
+            ],
+        )
 
 
 if __name__ == "__main__":
