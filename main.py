@@ -67,13 +67,13 @@ def list_keywords(ack, client: WebClient, body):
     dm_channel = dm["channel"]["id"]
 
     if not keywords:
-        client.chat_postEphemeral(
+        client.chat_postMessage(
             channel=dm_channel, user=user_id, text="등록된 감자어가 없습니다."
         )
         return
 
     keywords_text = "\n".join(f"- {kw}" for kw in keywords)
-    client.chat_postEphemeral(
+    client.chat_postMessage(
         channel=dm_channel,
         user=user_id,
         text=f"현재 등록된 감자어 목록입니다:\n{keywords_text}",
